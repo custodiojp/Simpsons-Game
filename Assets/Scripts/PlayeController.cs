@@ -27,6 +27,9 @@ public class PlatformController : MonoBehaviour
     [Header("Animation Settings")]
     [SerializeField] private Animator Anim;
 
+    [Header("Attack Settings")]
+    [SerializeField] private GameObject HitCollider;
+
     // Input Actions - using your PlayerActionMap asset
     private PlayerActionMap inputActions;
     private InputAction moveAction;
@@ -137,13 +140,26 @@ public class PlatformController : MonoBehaviour
         );
 
         Anim.SetBool("isMooving", rb.linearVelocity.magnitude > 0.4f);
+        SpriteRenderer sprite = GetComponent<SpriteRenderer>();
+
         if (rb.linearVelocity.x > 0.4f)
         {
-            this.GetComponent<SpriteRenderer>().flipX = false;
+            sprite.flipX = false;
         }
-        else if(rb.linearVelocity.x < -0.4f)
+        else if (rb.linearVelocity.x < -0.4f)
         {
-            this.GetComponent<SpriteRenderer>().flipX = true;
+            sprite.flipX = true;
+        }
+
+        if (HitCollider != null)
+        {
+            float direction = sprite.flipX ? -1f : 1f;
+
+            HitCollider.transform.localPosition = new Vector3(
+                0.18f * direction,
+                HitCollider.transform.localPosition.y,
+                HitCollider.transform.localPosition.z
+            );
         }
     }
     
@@ -190,6 +206,17 @@ public class PlatformController : MonoBehaviour
             Gizmos.color = isGrounded ? Color.green : Color.red;
             Gizmos.DrawRay(transform.position, Vector2.down * 1.1f);
         }
+    }
+    public void ActivateCollider()
+    {
+        Debug.Log("teste");
+        HitCollider.SetActive(true);
+    }
+
+    public void DeactivateCollider()
+    {
+        Debug.Log("teste2");
+        HitCollider.SetActive(false);
     }
     public void ChangeTextoCoin(){
         coinCounter+=1;
